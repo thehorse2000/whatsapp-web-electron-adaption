@@ -1,7 +1,7 @@
 'use strict';
 
 const EventEmitter = require('events');
-const puppeteer = require('puppeteer');
+const pinned = require('puppeteer-in-electron');
 const moduleRaid = require('@pedroslopez/moduleraid/moduleraid');
 
 const Util = require('./util/Util');
@@ -21,6 +21,8 @@ const NoAuth = require('./authStrategies/NoAuth');
  * @param {AuthStrategy} options.authStrategy - Determines how to save and restore sessions. Will use LegacySessionAuth if options.session is set. Otherwise, NoAuth will be used.
  * @param {number} options.authTimeoutMs - Timeout for authentication selector in puppeteer
  * @param {object} options.puppeteer - Puppeteer launch options. View docs here: https://github.com/puppeteer/puppeteer/
+ * @param {object} puppeteerBrowser - Puppeteer browser instance
+ * @param {object} browserWindow - Electron browser window instance
  * @param {number} options.qrMaxRetries - How many times should the qrcode be refreshed before giving up
  * @param {string} options.restartOnAuthFail  - @deprecated This option should be set directly on the LegacySessionAuth.
  * @param {object} options.session - @deprecated Only here for backwards-compatibility. You should move to using LocalAuth, or set the authStrategy to LegacySessionAuth explicitly. 
@@ -50,7 +52,7 @@ const NoAuth = require('./authStrategies/NoAuth');
  * @fires Client#group_admin_changed
  */
 class Client extends EventEmitter {
-    constructor(options = {}) {
+    constructor(puppeteerBrowser, browserWindow, options= {}) {
         super();
 
         this.options = Util.mergeDefault(DefaultOptions, options);
@@ -76,7 +78,8 @@ class Client extends EventEmitter {
 
         this.authStrategy.setup(this);
 
-        this.pupBrowser = null;
+        this.pupBrowser = puppeteerBrowser;
+        this.browserWindow = browserWindow;
         this.pupPage = null;
 
         Util.setFfmpegPath(this.options.ffmpegPath);
@@ -86,23 +89,26 @@ class Client extends EventEmitter {
      * Sets up events and requirements, kicks off authentication request
      */
     async initialize() {
-        let [browser, page] = [null, null];
+        // let [browser, page] = [null, null];
 
-        await this.authStrategy.beforeBrowserInitialized();
+        // await this.authStrategy.beforeBrowserInitialized();
 
-        const puppeteerOpts = this.options.puppeteer;
-        if (puppeteerOpts && puppeteerOpts.browserWSEndpoint) {
-            browser = await puppeteer.connect(puppeteerOpts);
-            page = await browser.newPage();
-        } else {
-            const browserArgs = [...(puppeteerOpts.args || [])];
-            if(!browserArgs.find(arg => arg.includes('--user-agent'))) {
-                browserArgs.push(`--user-agent=${this.options.userAgent}`);
-            }
+        // const puppeteerOpts = this.options.puppeteer;
+        // if (puppeteerOpts && puppeteerOpts.browserWSEndpoint) {
+        //     browser = await puppeteer.connect(puppeteerOpts);
+        //     page = await browser.newPage();
+        // } else {
+        //     const browserArgs = [...(puppeteerOpts.args || [])];
+        //     if(!browserArgs.find(arg => arg.includes('--user-agent'))) {
+        //         browserArgs.push(`--user-agent=${this.options.userAgent}`);
+        //     }
 
-            browser = await puppeteer.launch({...puppeteerOpts, args: browserArgs});
-            page = (await browser.pages())[0];
-        }
+        //     browser = await puppeteer.launch({...puppeteerOpts, args: browserArgs});
+        //     page = (await browser.pages())[0];
+        // }
+
+        const page = await pie.getPage(this.pupBrowser, this.browserWindow);
+        page.setUserAgent(this.options.userAgent);
 
         if (this.options.proxyAuthentication !== undefined) {
             await page.authenticate(this.options.proxyAuthentication);
@@ -111,7 +117,6 @@ class Client extends EventEmitter {
         await page.setUserAgent(this.options.userAgent);
         if (this.options.bypassCSP) await page.setBypassCSP(true);
 
-        this.pupBrowser = browser;
         this.pupPage = page;
 
         await this.authStrategy.afterBrowserInitialized();
@@ -642,8 +647,8 @@ class Client extends EventEmitter {
      * Closes the client
      */
     async destroy() {
-        await this.pupBrowser.close();
-        await this.authStrategy.destroy();
+        // await this.pupBrowser.close();
+        // await this.authStrategy.destroy();
     }
 
     /**

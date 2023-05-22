@@ -12,9 +12,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pedroslopez/whatsapp-web.js.git"
+    "url": "git+https://github.com/thehorse2000/whatsapp-web-electron-adaption.git"
   },
   "keywords": [
+    "electron",
     "whatsapp",
     "whatsapp-web",
     "api",
@@ -22,10 +23,10 @@
     "client",
     "node"
   ],
-  "author": "Pedro Lopez",
+  "author": "Amr osama",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/pedroslopez/whatsapp-web.js/issues"
+    "url": "https://github.com/thehorse2000/whatsapp-web-electron-adaption/issues"
   },
   "homepage": "https://wwebjs.dev/",
   "dependencies": {
@@ -35,7 +36,7 @@
     "mime": "^3.0.0",
     "node-fetch": "^2.6.5",
     "node-webpmux": "^3.1.0",
-    "puppeteer": "^13.0.0"
+    "puppeteer-in-electron": "^3.0.5"
   },
   "devDependencies": {
     "@types/node-fetch": "^2.5.12",

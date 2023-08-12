@@ -4,7 +4,7 @@
 <head>
   <meta name="generator" content="JSDoc 3.6.11">
   <meta charset="utf-8">
-  <title>whatsapp-web.js 1.20.0 &raquo; Class: Client</title>
+  <title>whatsapp-web.js 1.22.1 &raquo; Class: Client</title>
   <link rel="stylesheet" href="https://brick.a.ssl.fastly.net/Karla:400,400i,700,700i" type="text/css">
   <link rel="stylesheet" href="https://brick.a.ssl.fastly.net/Noto+Serif:400,400i,700,700i" type="text/css">
   <link rel="stylesheet" href="https://brick.a.ssl.fastly.net/Inconsolata:500" type="text/css">
@@ -15,7 +15,7 @@
   <nav id="jsdoc-navbar" role="navigation" class="jsdoc-navbar">
     <div id="jsdoc-navbar-container">
       <div id="jsdoc-navbar-content">
-        <a href="index.html" class="jsdoc-navbar-package-name">whatsapp-web.<wbr>js 1.<wbr>20.<wbr>0</a>
+        <a href="index.html" class="jsdoc-navbar-package-name">whatsapp-web.<wbr>js 1.<wbr>22.<wbr>1</a>
       </div>
     </div>
   </nav>
@@ -26,7 +26,7 @@
           <header class="page-header">
             <div class="symbol-detail-labels"><span class="label label-kind">class</span></div>
             <h1><small></small><span class="symbol-name">Client</span></h1>
-            <p class="source-link">Source: <a href="Client.js.html#source-line-52">Client.<wbr>js:52</a></p>
+            <p class="source-link">Source: <a href="Client.js.html#source-line-55">Client.<wbr>js:55</a></p>
             <div class="symbol-classdesc">
               <p>Starting point for interacting with the WhatsApp Web API</p>
             </div>
@@ -59,6 +59,9 @@
                     <dd>
                     </dd>
                     <dt><a href="Client.html#acceptInvite">acceptInvite(inviteCode)</a></dt>
+                    <dd>
+                    </dd>
+                    <dt><a href="Client.html#addOrRemoveLabels">addOrRemoveLabels(labelIds, chatIds)</a></dt>
                     <dd>
                     </dd>
                     <dt><a href="Client.html#archiveChat">archiveChat()</a></dt>
@@ -94,13 +97,13 @@
                     <dt><a href="Client.html#getContactById">getContactById(contactId)</a></dt>
                     <dd>
                     </dd>
-                    <dt><a href="Client.html#getContacts">getContacts()</a></dt>
-                    <dd>
-                    </dd>
                   </dl>
                 </div>
                 <div class="summary-column">
                   <dl class="dl-summary-callout">
+                    <dt><a href="Client.html#getContacts">getContacts()</a></dt>
+                    <dd>
+                    </dd>
                     <dt><a href="Client.html#getCountryCode">getCountryCode(number)</a></dt>
                     <dd>
                     </dd>
@@ -140,13 +143,13 @@
                     <dt><a href="Client.html#markChatUnread">markChatUnread(chatId)</a></dt>
                     <dd>
                     </dd>
-                    <dt><a href="Client.html#muteChat">muteChat(chatId, unmuteDate)</a></dt>
-                    <dd>
-                    </dd>
                   </dl>
                 </div>
                 <div class="summary-column">
                   <dl class="dl-summary-callout">
+                    <dt><a href="Client.html#muteChat">muteChat(chatId, unmuteDate)</a></dt>
+                    <dd>
+                    </dd>
                     <dt><a href="Client.html#pinChat">pinChat()</a></dt>
                     <dd>
                     </dd>
@@ -254,6 +257,9 @@
                     <dt><a href="Client.html#event:message_create">message_create</a></dt>
                     <dd>
                     </dd>
+                    <dt><a href="Client.html#event:message_edit">message_edit</a></dt>
+                    <dd>
+                    </dd>
                     <dt><a href="Client.html#event:message_reaction">message_reaction</a></dt>
                     <dd>
                     </dd>
@@ -323,6 +329,34 @@
                             </td>
                             <td>
                               <p>Determines how to save and restore sessions. Will use LegacySessionAuth if options.session is set. Otherwise, NoAuth will be used.</p>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <p>webVersion</p>
+                            </td>
+                            <td>
+                              <p>&nbsp;</p>
+                            </td>
+                            <td>
+                              <p>&nbsp;</p>
+                            </td>
+                            <td>
+                              <p>The version of WhatsApp Web to use. Use options.webVersionCache to configure how the version is retrieved.</p>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <p>webVersionCache</p>
+                            </td>
+                            <td>
+                              <p>&nbsp;</p>
+                            </td>
+                            <td>
+                              <p>&nbsp;</p>
+                            </td>
+                            <td>
+                              <p>Determines how to retrieve the WhatsApp Web version. Defaults to a local cache (LocalWebCache) that falls back to latest if the requested version is not found.</p>
                             </td>
                           </tr>
                           <tr>
@@ -596,6 +630,56 @@
                   <p><code>Promise containing string</code> 
                   <p>Id of the joined Chat</p>
                   </p>
+                </dd>
+              </dl>
+              <div class="symbol-detail-labels"><span class="label label-async">async</span></div>
+              <h3 id="addOrRemoveLabels"><span class="symbol-name">addOrRemoveLabels</span><span class="signature"><span class="signature-params">(labelIds, chatIds)</span>&nbsp;&rarr; <span class="signature-returns"> Promise containing void</span></span></h3>
+              <p>Change labels in chats</p>
+              <section>
+                <h4>Parameters</h4>
+                <table class="jsdoc-details-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Type</th>
+                      <th>Optional</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <p>labelIds</p>
+                      </td>
+                      <td>
+                        <p>Array of (number or string)</p>
+                      </td>
+                      <td>
+                        <p>&nbsp;</p>
+                      </td>
+                      <td>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p>chatIds</p>
+                      </td>
+                      <td>
+                        <p>Array of string</p>
+                      </td>
+                      <td>
+                        <p>&nbsp;</p>
+                      </td>
+                      <td>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </section>
+              <dl class="dl-compact">
+                <dt>Returns</dt>
+                <dd>
+                  <p><code>Promise containing void</code> </p>
                 </dd>
               </dl>
               <div class="symbol-detail-labels"><span class="label label-async">async</span></div>
@@ -2467,6 +2551,64 @@
               </section>
               <dl class="dl-compact">
               </dl>
+              <h3 id="event:message_edit"><span class="symbol-name">message_edit</span></h3>
+              <p>Emitted when messages are edited</p>
+              <section>
+                <h4>Parameters</h4>
+                <table class="jsdoc-details-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Type</th>
+                      <th>Optional</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <p>message</p>
+                      </td>
+                      <td>
+                        <p><a href="Message.html">Message</a></p>
+                      </td>
+                      <td>
+                        <p>&nbsp;</p>
+                      </td>
+                      <td>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p>newBody</p>
+                      </td>
+                      <td>
+                        <p>string</p>
+                      </td>
+                      <td>
+                        <p>&nbsp;</p>
+                      </td>
+                      <td>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p>prevBody</p>
+                      </td>
+                      <td>
+                        <p>string</p>
+                      </td>
+                      <td>
+                        <p>&nbsp;</p>
+                      </td>
+                      <td>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </section>
+              <dl class="dl-compact">
+              </dl>
               <h3 id="event:message_reaction"><span class="symbol-name">message_reaction</span></h3>
               <p>Emitted when a reaction is sent, received, updated or removed</p>
               <section>
@@ -2769,7 +2911,7 @@
   <footer id="jsdoc-footer" class="jsdoc-footer">
     <div id="jsdoc-footer-container">
       <p>
-        Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc</a> 3.6.11 on May 19, 2023.
+        Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc</a> 3.6.11 on August 10, 2023.
       </p>
     </div>
   </footer>

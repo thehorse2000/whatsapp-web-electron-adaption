@@ -32,7 +32,6 @@ const {
     List,
     Reaction,
 } = require("./structures");
-const LegacySessionAuth = require("./authStrategies/LegacySessionAuth");
 const NoAuth = require("./authStrategies/NoAuth");
 
 /**
@@ -84,20 +83,7 @@ class Client extends EventEmitter {
         this.options = Util.mergeDefault(DefaultOptions, options);
 
         if (!this.options.authStrategy) {
-            if (Object.prototype.hasOwnProperty.call(this.options, "session")) {
-                process.emitWarning(
-                    "options.session is deprecated and will be removed in a future release due to incompatibility with multi-device. " +
-                        "Use the LocalAuth authStrategy, don't pass in a session as an option, or suppress this warning by using the LegacySessionAuth strategy explicitly (see https://wwebjs.dev/guide/authentication.html#legacysessionauth-strategy).",
-                    "DeprecationWarning"
-                );
-
-                this.authStrategy = new LegacySessionAuth({
-                    session: this.options.session,
-                    restartOnAuthFail: this.options.restartOnAuthFail,
-                });
-            } else {
-                this.authStrategy = new NoAuth();
-            }
+            this.authStrategy = new NoAuth();
         } else {
             this.authStrategy = this.options.authStrategy;
         }
@@ -961,7 +947,8 @@ class Client extends EventEmitter {
         } else {
             this.pupPage.on("response", async (res) => {
                 if (res.ok() && res.url() === WhatsWebURL) {
-                    await webCache.persist(await res.text());
+                    const indexHtml = await res.text();
+                    this.currentIndexHtml = indexHtml;
                 }
             });
         }

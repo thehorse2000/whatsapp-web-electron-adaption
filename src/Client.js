@@ -276,7 +276,6 @@ class Client extends EventEmitter {
         // browser = null;
         // page = null;
 
-        // await this.authStrategy.beforeBrowserInitialized();
 
         // const puppeteerOpts = this.options.puppeteer;
         // if (puppeteerOpts && puppeteerOpts.browserWSEndpoint) {
@@ -293,6 +292,8 @@ class Client extends EventEmitter {
         //     browser = await puppeteer.launch({...puppeteerOpts, args: browserArgs});
         //     page = (await browser.pages())[0];
         // }
+
+        await this.authStrategy.beforeBrowserInitialized();
 
         const page = await pie.getPage(this.pupBrowser, this.browserWindow);
         page.setUserAgent(this.options.userAgent);

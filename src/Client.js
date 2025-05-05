@@ -27,6 +27,8 @@ const {exposeFunctionIfAbsent} = require('./util/Puppeteer');
  * @param {string} options.webVersion - The version of WhatsApp Web to use. Use options.webVersionCache to configure how the version is retrieved.
  * @param {object} options.webVersionCache - Determines how to retrieve the WhatsApp Web version. Defaults to a local cache (LocalWebCache) that falls back to latest if the requested version is not found.
  * @param {number} options.authTimeoutMs - Timeout for authentication selector in puppeteer
+ * @param {object} puppeteerBrowser - Puppeteer browser instance
+ * @param {object} browserWindow - Electron browser window instance
  * @param {object} options.puppeteer - Puppeteer launch options. View docs here: https://github.com/puppeteer/puppeteer/
  * @param {number} options.qrMaxRetries - How many times should the qrcode be refreshed before giving up
  * @param {string} options.restartOnAuthFail  - @deprecated This option should be set directly on the LegacySessionAuth.
@@ -61,7 +63,7 @@ const {exposeFunctionIfAbsent} = require('./util/Puppeteer');
  * @fires Client#vote_update
  */
 class Client extends EventEmitter {
-    constructor(options = {}) {
+    constructor(puppeteerBrowser, browserWindow, options = {}) {
         super();
 
         this.options = Util.mergeDefault(DefaultOptions, options);
@@ -74,10 +76,9 @@ class Client extends EventEmitter {
 
         this.authStrategy.setup(this);
 
-        /**
-         * @type {puppeteer.Browser}
-         */
-        this.pupBrowser = null;
+        this.pupBrowser = puppeteerBrowser;
+        this.browserWindow = browserWindow;
+
         /**
          * @type {puppeteer.Page}
          */
@@ -262,36 +263,39 @@ class Client extends EventEmitter {
      */
     async initialize() {
 
-        let 
-            /**
-             * @type {puppeteer.Browser}
-             */
-            browser, 
-            /**
-             * @type {puppeteer.Page}
-             */
-            page;
+        // let 
+        //     /**
+        //      * @type {puppeteer.Browser}
+        //      */
+        //     browser, 
+        //     /**
+        //      * @type {puppeteer.Page}
+        //      */
+        //     page;
 
-        browser = null;
-        page = null;
+        // browser = null;
+        // page = null;
 
-        await this.authStrategy.beforeBrowserInitialized();
+        // await this.authStrategy.beforeBrowserInitialized();
 
-        const puppeteerOpts = this.options.puppeteer;
-        if (puppeteerOpts && puppeteerOpts.browserWSEndpoint) {
-            browser = await puppeteer.connect(puppeteerOpts);
-            page = await browser.newPage();
-        } else {
-            const browserArgs = [...(puppeteerOpts.args || [])];
-            if(!browserArgs.find(arg => arg.includes('--user-agent'))) {
-                browserArgs.push(`--user-agent=${this.options.userAgent}`);
-            }
-            // navigator.webdriver fix
-            browserArgs.push('--disable-blink-features=AutomationControlled');
+        // const puppeteerOpts = this.options.puppeteer;
+        // if (puppeteerOpts && puppeteerOpts.browserWSEndpoint) {
+        //     browser = await puppeteer.connect(puppeteerOpts);
+        //     page = await browser.newPage();
+        // } else {
+        //     const browserArgs = [...(puppeteerOpts.args || [])];
+        //     if(!browserArgs.find(arg => arg.includes('--user-agent'))) {
+        //         browserArgs.push(`--user-agent=${this.options.userAgent}`);
+        //     }
+        //     // navigator.webdriver fix
+        //     browserArgs.push('--disable-blink-features=AutomationControlled');
 
-            browser = await puppeteer.launch({...puppeteerOpts, args: browserArgs});
-            page = (await browser.pages())[0];
-        }
+        //     browser = await puppeteer.launch({...puppeteerOpts, args: browserArgs});
+        //     page = (await browser.pages())[0];
+        // }
+
+        const page = await pie.getPage(this.pupBrowser, this.browserWindow);
+        page.setUserAgent(this.options.userAgent);
 
         if (this.options.proxyAuthentication !== undefined) {
             await page.authenticate(this.options.proxyAuthentication);
@@ -300,7 +304,6 @@ class Client extends EventEmitter {
         await page.setUserAgent(this.options.userAgent);
         if (this.options.bypassCSP) await page.setBypassCSP(true);
 
-        this.pupBrowser = browser;
         this.pupPage = page;
 
         await this.authStrategy.afterBrowserInitialized();
@@ -779,8 +782,8 @@ class Client extends EventEmitter {
      * Closes the client
      */
     async destroy() {
-        await this.pupBrowser.close();
-        await this.authStrategy.destroy();
+        // await this.pupBrowser.close();
+        // await this.authStrategy.destroy();
     }
 
     /**

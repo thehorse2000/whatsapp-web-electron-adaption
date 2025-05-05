@@ -29,8 +29,18 @@ client.on('auth_failure', msg => {
     console.error('AUTHENTICATION FAILURE', msg);
 });
 
-client.on('ready', () => {
+client.on('ready', async () => {
     console.log('READY');
+    const debugWWebVersion = await client.getWWebVersion();
+    console.log(`WWebVersion = ${debugWWebVersion}`);
+
+    client.pupPage.on('pageerror', function(err) {
+        console.log('Page error: ' + err.toString());
+    });
+    client.pupPage.on('error', function(err) {
+        console.log('Page error: ' + err.toString());
+    });
+    
 });
 
 client.on('message', async msg => {
@@ -429,6 +439,26 @@ client.on('message', async msg => {
          */
         const result = await msg.pin(60); // Will pin a message for 1 minute
         console.log(result); // True if the operation completed successfully, false otherwise
+    } else if (msg.body === '!howManyConnections') {
+        /**
+         * Get user device count by ID
+         * Each WaWeb Connection counts as one device, and the phone (if exists) counts as one
+         * So for a non-enterprise user with one WaWeb connection it should return "2"
+         */
+        let deviceCount = await client.getContactDeviceCount(msg.from);
+        await msg.reply(`You have *${deviceCount}* devices connected`);
+    } else if (msg.body === '!syncHistory') {
+        const isSynced = await client.syncHistory(msg.from);
+        // Or through the Chat object:
+        // const chat = await client.getChatById(msg.from);
+        // const isSynced = await chat.syncHistory();
+        
+        await msg.reply(isSynced ? 'Historical chat is syncing..' : 'There is no historical chat to sync.');
+    } else if (msg.body === '!statuses') {
+        const statuses = await client.getBroadcasts();
+        console.log(statuses);
+        const chat = await statuses[0]?.getChat(); // Get user chat of a first status
+        console.log(chat);
     }
 });
 
@@ -593,4 +623,13 @@ client.on('group_membership_request', async (notification) => {
     /** You can approve or reject the newly appeared membership request: */
     await client.approveGroupMembershipRequestss(notification.chatId, notification.author);
     await client.rejectGroupMembershipRequests(notification.chatId, notification.author);
+});
+
+client.on('message_reaction', async (reaction) => {
+    console.log('REACTION RECEIVED', reaction);
+});
+
+client.on('vote_update', (vote) => {
+    /** The vote that was affected: */
+    console.log(vote);
 });
